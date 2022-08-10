@@ -1,0 +1,428 @@
+package com.company;
+
+
+import java.util.Scanner;
+
+
+abstract class IMG_member{
+
+    private String E_no;
+    private String name;
+    private String branch;
+
+    public String getE_no() {
+        return E_no;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    static Scanner sc = new Scanner(System.in);
+
+
+    //Some Methods
+     abstract public void profile();
+
+
+
+    //Creating a parametrized constructor
+    //Assigns the profile fields to the corresponding user
+    IMG_member(String E_no_par, String name_par, String branch_par){
+
+            E_no = E_no_par;
+            name = name_par;
+            branch = branch_par;
+    }
+
+    
+
+    //Data fields have protected access modifier
+    //can be accessed only in child classes
+
+
+
+    //Assuming there are 4 students and 2 reviewers
+
+
+
+}
+
+
+
+
+
+
+class Student extends IMG_member{
+
+
+
+    private int submit_num;
+    private int approved_num;
+
+
+    private int[] status_arr;
+    private int[] iteration_arr;
+    private String[] comment_arr;
+
+
+    //Getter and Setter Methods
+
+
+    
+    public void setApproved_num() {
+        approved_num++;
+    }
+
+
+
+
+    public int[] getStatus_arr() {
+        return status_arr;
+    }
+
+
+
+    public String[] getComment_arr() {
+        return comment_arr;
+    }
+
+
+
+
+    Student(String E_no_par, String name_par, String branch_par, int[] iteration_arr_par, int[] status_arr_par, String[] comment_arr_par){
+        super(E_no_par,name_par,branch_par);
+        status_arr = status_arr_par;
+        comment_arr = comment_arr_par;
+        iteration_arr = iteration_arr_par;
+
+        for(int i=0; i<6 ;i++){
+            if(status_arr[i]!=0){
+                submit_num++;
+            }
+
+            if(status_arr[i]==3){
+                approved_num++;
+            }
+        }
+
+    }
+
+    //Student Part A - Profile of user
+    public void profile(){
+
+        System.out.println("A)Profile of " + super.getName() + " : ");
+
+
+        //Calculating submit_num and approved_num
+
+        System.out.println("USER PROFILE:");
+        System.out.println("Name : " + super.getName());
+        System.out.println("Enrollment Number : " + super.getE_no());
+        System.out.println("Branch : " + super.getBranch());
+        System.out.println();
+        System.out.println("ASSIGNMENT STATUS:");
+        System.out.println("Total Assignments : " + 6);
+        System.out.println("Submitted : " + submit_num);
+        System.out.println("Approved : " + approved_num);
+        System.out.println("Pending : " + (6-approved_num));
+        System.out.println();
+    }
+
+
+
+
+
+    //Student Part B - Submission of Assignment
+    protected void submit_accept(int a) {
+        int temp = a-1;
+
+        if(status_arr[temp] == 0 || status_arr[temp] == 2) {
+            if(status_arr[temp]==0)
+            submit_num++;
+
+
+            iteration_arr[temp]++;         //increase iteration number
+            status_arr[temp] = 1;
+            System.out.println("Iteration number " + iteration_arr[temp] + " of Assignment " + a +
+                    " has been submitted ");
+        }
+        else if(status_arr[temp] == 1){
+            System.out.println("Assignment is already submitted for review, not yet reviewed");
+        }
+//        else if(status_arr[temp] == 2){
+//            System.out.println("Assignment is reviewed, changes suggested ");
+//            status_arr[temp] = 0;        //Assignment has to be resubmitted after changes
+//        }
+        else if(status_arr[temp] == 3){
+            System.out.println("Assignment is already approved");
+        }
+
+    }
+
+
+
+    //Student Part D - Status of Assignment
+    protected void getStatus(int a){
+        int temp = a-1;
+
+
+        String str1 = "xxx";
+        
+        if(status_arr[temp] == 0){
+            str1 = "Not submitted";
+        }
+        else if(status_arr[temp] == 1){
+            str1 = "Submitted and Pending for review";
+        }
+        else if(status_arr[temp] == 2){
+            str1 = "Reviewed, Changes suggested";
+
+        }
+        else if(status_arr[temp] == 3){
+            str1 = "Assignment Approved";
+        }
+
+        System.out.print("Status of Assignment " + a + ": "+ str1);
+        System.out.println();
+
+//        return str1;
+    }
+
+}
+
+
+
+
+
+
+class Reviewer extends IMG_member{
+
+
+    Reviewer(String E_no_par, String name_par, String branch_par){
+        super(E_no_par,name_par,branch_par);
+
+    }
+
+
+
+    //Reviewer Part A - Profile of User
+    public void profile(){
+
+        System.out.println("A)Profile of " + super.getName() + " : ");
+
+
+        System.out.println("USER PROFILE:");
+        System.out.println("Name : " + super.getName());
+        System.out.println("Enrollment Number : " + super.getE_no());
+        System.out.println("Branch : " + super.getBranch());
+        System.out.println();
+
+    }
+
+
+
+    //Reviewer Part D - Status of Assignment
+    protected void getStatus(int re5, Student my_stu){
+        System.out.print("Assignment " + (re5) + " : " );
+        if(my_stu.getStatus_arr()[re5-1] == 0){
+            System.out.println("Not submitted");
+        }
+        else if(my_stu.getStatus_arr()[re5-1]==1){
+            System.out.println("Submitted and Pending for review");
+        }
+        else if(my_stu.getStatus_arr()[re5-1]==2){
+            System.out.println("Reviewed, Changes suggested  :  ");
+        }
+        else if(my_stu.getStatus_arr()[re5-1]==3){
+            System.out.println("Assignment Approved");
+        }
+    }
+
+
+    //Reviewer Part C - Acceptance of Assignment
+    protected void accept(int re5, Student my_stu){
+        if(my_stu.getStatus_arr()[re5-1] == 3){
+            System.out.println("Assignment-" + re5 + " has already been accepted");
+        }
+        else if(my_stu.getStatus_arr()[re5-1] == 0 || my_stu.getStatus_arr()[re5-1] == 1 || my_stu.getStatus_arr()[re5-1] == 2) {
+            my_stu.getStatus_arr()[re5-1] = 3;
+
+            my_stu.setApproved_num();
+
+            System.out.println("Assignment " + (re5) + " has been accepted");
+        }
+    }
+
+    // Reviewer Part E - Comments/Suggestions
+    protected void suggestChanges(int re5, Student my_stu){
+        System.out.print("What changes do you suggest? : ");
+        my_stu.getComment_arr()[re5-1] = sc.nextLine();
+        System.out.println("Comment Added : " + my_stu.getComment_arr()[re5-1]);
+    }
+
+
+
+
+
+}
+
+class Main {
+
+    static void load_student_data(Student[] Stu_arr_par){
+
+        Stu_arr_par[0] = new Student("21114060", "Mehak", "CSE",
+                new int[]{5, 2, 3, 1, 1, 0}, new int[]{3, 3, 3, 1, 2, 0},
+                new String[]{"none","none","none","none","none","none"});
+        Stu_arr_par[1] = new Student("21987239", "Vyusti", "Chemical",
+                new int[]{6, 1, 4, 2, 1, 2}, new int[]{3, 3, 0, 1, 2, 0},
+                new String[]{"none","none","none","none","none","none"});
+        Stu_arr_par[2] = new Student("21129878", "Samrat", "Mech",
+                new int[]{5, 0, 6, 1, 3, 1}, new int[]{3, 3, 3, 1, 2, 3},
+                new String[]{"none","none","none","none","none","none"});
+        Stu_arr_par[3] = new Student("21109218", "Akhil", "CSE",
+                new int[]{5, 2, 3, 7, 3, 4}, new int[]{3, 3, 3, 1, 2, 0},
+                new String[]{"none","none","none","none","none","none"});
+
+//        return Stu_arr_par;
+    }
+
+
+    static  void load_reviewer_data(Reviewer[] Rev_arr_par){
+
+        Rev_arr_par[0] = new Reviewer("19562374", "Shreyas", "CSE");
+        Rev_arr_par[1] = new Reviewer("19767378", "Mrinal", "Chemical");
+
+//        return Rev_arr_par;
+    }
+
+
+
+
+
+    public static void main(String[] args) {
+
+
+
+        Scanner sc = new Scanner(System.in);
+
+
+        //Student Objects Array created and data loaded
+        Student[] Stu_arr = new Student[4];
+        load_student_data(Stu_arr);
+//        Stu_arr[0].getApproved_num();
+
+
+        //Reviewer Objects Array created and data loaded
+        Reviewer[] Rev_arr = new Reviewer[2];
+        load_reviewer_data(Rev_arr);
+
+
+
+
+        int check1 = 0;
+
+        int rew1 = 0;
+        int rew2 = 0;
+        int rew3 = 0;
+        int rew4 = 0;
+        int rew5 = 0;
+
+        int stu1 = 0;
+        int stu2 = 0;
+        int stu3 = 0;
+        int stu4 = 0;
+
+
+//        int decide = 0;
+//
+//        System.out.println("Press 1 to exit program, any integer to continue");
+//        decide = sc.nextInt();
+
+
+        while(true) {
+
+
+
+
+            System.out.println("Hello, press 0 for reviewer, 1 for student, 2 to exit");
+            check1 = sc.nextInt();
+
+            if(check1==2){
+                break;
+            }
+
+
+            //Program running for reviewer
+            if (check1 == 0) {
+                System.out.println("Welcome Reviewer!");
+                System.out.println("Press 0 for Shreyas, 1 for Mrinal");
+                rew1 = sc.nextInt();
+
+                System.out.println("What would you like to do?");
+                System.out.println("Press 0 to see profile, 1 to check assignments");
+                rew2 = sc.nextInt();
+
+                if (rew2 == 0) {
+                    Rev_arr[rew1].profile();
+                } else if (rew2 == 1) {
+                    System.out.println("For which student would you like to review assignment/ " +
+                            "check status/ suggest changes?");
+                    System.out.println("Press 0 for Mehak, 1 for Vyusti, 2 for Samrat, 3 for Akhil");
+                    rew3 = sc.nextInt();
+
+                    System.out.println("What action do you wish to perform?");
+                    System.out.println("Press 0 to check status of assignment, 1 to accept an assignment, 2 to suggest " +
+                            "changes in an assignment");
+                    rew4 = sc.nextInt();
+                    System.out.println("Enter Assignment Index: ");
+                    rew5 = sc.nextInt();
+
+                    if (rew4 == 0) {
+                        Rev_arr[rew1].getStatus(rew5, Stu_arr[rew3]);
+                    } else if (rew4 == 1) {
+                        Rev_arr[rew1].accept(rew5, Stu_arr[rew3]);
+                    } else if (rew4 == 2) {
+                        Rev_arr[rew1].suggestChanges(rew5, Stu_arr[rew3]);
+                    }
+                }
+            }
+
+
+            //Program running for student
+            else if (check1 == 1) {
+                System.out.println("Welcome Student!");
+                System.out.println("Press 0 for Mehak, 1 for Vyusti, 2 for Samrat, 3 for Akhil");
+                stu1 = sc.nextInt();
+
+                if (stu1 >= 0 && stu1 < 4) {
+                    System.out.println("Hello, " + "! What would you like to do?");
+                    System.out.println("Press 0 to see profile, 1 to submit an assignment, 2 to check status of assignments");
+                    stu2 = sc.nextInt();
+
+                    if (stu2 == 0) {
+                        Stu_arr[stu1].profile();
+                    } else if (stu2 == 1) {
+                        System.out.println("Which assignment would you like to submit?");
+                        System.out.println("Enter the assignment index : ");
+                        stu3 = sc.nextInt();
+                        Stu_arr[stu1].submit_accept(stu3);
+                    } else if (stu2 == 2) {
+                        System.out.println("Which assignment would you like to check the status of?");
+                        System.out.println("Enter the assignment index : ");
+                        stu4 = sc.nextInt();
+
+                        Stu_arr[stu1].getStatus(stu4);
+                    }
+                }
+            }
+
+        }
+
+    }
+}
+
